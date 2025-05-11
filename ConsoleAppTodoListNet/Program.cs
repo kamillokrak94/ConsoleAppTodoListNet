@@ -7,7 +7,7 @@
             List<string> todoList = new List<string>();
             string choice;
 
-            do
+            while (true)
             {
                 CreateHeader();
                 choice = Console.ReadLine();
@@ -33,7 +33,12 @@
                         Console.WriteLine("Invalid choice. Please try again.");
                         break;
                 }
-            } while (choice != "5");
+
+                if (choice == "5")
+                {
+                    break;
+                }
+            }
 
             Console.WriteLine("\nPress any key to exit...");
             Console.ReadKey();
