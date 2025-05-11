@@ -7,15 +7,9 @@
             List<string> todoList = new List<string>();
             string choice;
 
-            do
+            while (true)
             {
-                Console.WriteLine("==== TODO LIST ====");
-                Console.WriteLine("1. Add item");
-                Console.WriteLine("2. View items");
-                Console.WriteLine("3. Delete item");
-                Console.WriteLine("4. Clear console");
-                Console.WriteLine("5. Exit");
-                Console.Write("Enter your choice: ");
+                CreateHeader();
                 choice = Console.ReadLine();
 
                 switch (choice)
@@ -39,12 +33,26 @@
                         Console.WriteLine("Invalid choice. Please try again.");
                         break;
                 }
-            } while (choice != "5");
+
+                if (choice == "5")
+                {
+                    break;
+                }
+            }
 
             Console.WriteLine("\nPress any key to exit...");
             Console.ReadKey();
         }
-
+        private static void CreateHeader()
+        {
+            Console.WriteLine("==== TODO LIST ====");
+                Console.WriteLine("1. Add item");
+                Console.WriteLine("2. View items");
+                Console.WriteLine("3. Delete item");
+                Console.WriteLine("4. Clear console");
+                Console.WriteLine("5. Exit");
+                Console.Write("Enter your choice: ");
+        }
         private static void AddTodoItem(List<string> todoList)
         {
             Console.Write("\nEnter a new TODO item: ");
