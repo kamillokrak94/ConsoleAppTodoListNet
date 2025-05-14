@@ -4,24 +4,26 @@
     {
         public static void Main(string[] args)
         {
-            List<string> todoList = new List<string>();
+            ITodoService service = new TodoService();
+
+
             string choice;
 
             while (true)
             {
                 CreateHeader();
-                choice = Console.ReadLine();
+                choice = Console.ReadLine() ?? string.Empty;
 
                 switch (choice)
                 {
                     case "1":
-                        AddTodoItem(todoList);
+                        AddTodoItem(service);
                         break;
                     case "2":
-                        ViewTodoList(todoList);
+                        ViewTodoList(service);
                         break;
                     case "3":
-                        DeleteTodoItem(todoList);
+                        DeleteTodoItem(service);
                         break;
                     case "4":
                         Console.Clear();
@@ -46,35 +48,63 @@
         private static void CreateHeader()
         {
             Console.WriteLine("==== TODO LIST ====");
-                Console.WriteLine("1. Add item");
-                Console.WriteLine("2. View items");
-                Console.WriteLine("3. Delete item");
-                Console.WriteLine("4. Clear console");
-                Console.WriteLine("5. Exit");
-                Console.Write("Enter your choice: ");
+            Console.WriteLine("1. Add item");
+            Console.WriteLine("2. View items");
+            Console.WriteLine("3. Delete item");
+            Console.WriteLine("4. Clear console");
+            Console.WriteLine("5. Exit");
+            Console.Write("Enter your choice: ");
         }
-        private static void AddTodoItem(List<string> todoList)
+        private static void AddTodoItem(ITodoService service)
         {
             Console.Write("\nEnter a new TODO item: ");
-
-            Console.WriteLine("Item added successfully.");
-
+            var description = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(description))
+            {
+                service.AddTodo(description);
+                Console.WriteLine("Item added successfully.");
+            }
+            else
+            {
+                Console.WriteLine("Description cannot be empty.");
+            }
         }
 
-        private static void ViewTodoList(List<string> todoList)
+        private static void ViewTodoList(ITodoService service)
         {
+            var todos = service.GetAllTodos();
             Console.WriteLine("\n==== TODO LIST ====");
-
+            if (todos.Count == 0)
+            {
+                Console.WriteLine("No items found.");
+            }
+            else
+            {
+                foreach (var todo in todos)
+                {
+                    Console.WriteLine($"{todo.Id}. {todo.Description}");
+                }
+            }
         }
-
-        private static void DeleteTodoItem(List<string> todoList)
+        private static void DeleteTodoItem(ITodoService service)
         {
-            ViewTodoList(todoList);
-
-            Console.WriteLine("Item deleted successfully.");
-
-
+            ViewTodoList(service);
+            Console.Write("\nEnter the ID of the item to delete: ");
+            if (int.TryParse(Console.ReadLine(), out int id))
+            {
+                if (service.RemoveTodo(id))
+                {
+                    Console.WriteLine("Item deleted successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("Item not found.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid ID.");
+            }
         }
-
     }
 }
