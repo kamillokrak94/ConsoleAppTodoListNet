@@ -1,11 +1,6 @@
-﻿namespace ConsoleAppTodoListNet
+﻿using ConsoleAppTodoListNet.Models;
+namespace ConsoleAppTodoListNet
 {
-    public class Todo
-    {
-        public int Id { get; set; }
-        public string Description { get; set; }
-    }
-
     public interface ITodoService
     {
         void AddTodo(string description);
@@ -21,19 +16,27 @@
 
         public void AddTodo(string description)
         {
-            if (string.IsNullOrWhiteSpace(description))
-                throw new ArgumentException("Description cannot be empty.", nameof(description));
-
-            _todos.Add(new Todo
+            try
             {
-                Id = _nextId++,
-                Description = description
-            });
+                if (string.IsNullOrWhiteSpace(description))
+                    throw new ArgumentException("Description cannot be empty.", nameof(description));
+
+                _todos.Add(new Todo
+                {
+                    Id = _nextId++,
+                    Description = description
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                
+                throw;
+            }
         }
 
         public List<Todo> GetAllTodos()
         {
-            // Return a copy to prevent external modification
+            
             return new List<Todo>(_todos);
         }
 
