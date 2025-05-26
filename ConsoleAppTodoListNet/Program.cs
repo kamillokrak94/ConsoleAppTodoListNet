@@ -1,4 +1,6 @@
-﻿namespace ConsoleAppTodoListNet
+﻿using ConsoleAppTodoListNet.Services;
+
+namespace ConsoleAppTodoListNet
 {
     public class Program
     {
@@ -42,38 +44,53 @@
                 }
             }
 
-            Console.WriteLine("\nPress any key to exit...");
+            Console.WriteLine($"{Environment.NewLine}Press any key to exit...");
             Console.ReadKey();
         }
         private static void CreateHeader()
         {
             Console.WriteLine("==== TODO LIST ====");
-            Console.WriteLine("1. Add item");
-            Console.WriteLine("2. View items");
-            Console.WriteLine("3. Delete item");
-            Console.WriteLine("4. Clear console");
-            Console.WriteLine("5. Exit");
+            string[] menuOptions =
+            {
+        "1. Add item",
+        "2. View items",
+        "3. Delete item",
+        "4. Clear console",
+        "5. Exit"
+    };
+
+            foreach (var option in menuOptions)
+            {
+                Console.WriteLine(option);
+            }
             Console.Write("Enter your choice: ");
         }
         private static void AddTodoItem(ITodoService service)
         {
-            Console.Write("\nEnter a new TODO item: ");
+            Console.Write($"{Environment.NewLine}Enter a new TODO item: ");
             var description = Console.ReadLine();
             if (!string.IsNullOrWhiteSpace(description))
             {
-                service.AddTodo(description);
-                Console.WriteLine("Item added successfully.");
+                if (service.AddTodo(description, out string message))
+                {
+                    Console.WriteLine($"{message}");
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to add item: {message}");
+                }
             }
             else
             {
-                Console.WriteLine("Description cannot be empty.");
+                service.AddTodo(description, out string message);
+                Console.WriteLine(message);
             }
         }
 
         private static void ViewTodoList(ITodoService service)
         {
             var todos = service.GetAllTodos();
-            Console.WriteLine("\n==== TODO LIST ====");
+            Console.WriteLine($"{Environment.NewLine}==== TODO LIST ====");
             if (todos.Count == 0)
             {
                 Console.WriteLine("No items found.");
@@ -89,16 +106,16 @@
         private static void DeleteTodoItem(ITodoService service)
         {
             ViewTodoList(service);
-            Console.Write("\nEnter the ID of the item to delete: ");
+            Console.Write($"{Environment.NewLine}Enter the ID of the item to delete: ");
             if (int.TryParse(Console.ReadLine(), out int id))
             {
-                if (service.RemoveTodo(id))
+                if (service.RemoveTodo(id, out string message))
                 {
-                    Console.WriteLine("Item deleted successfully.");
+                    Console.WriteLine(message);
                 }
                 else
                 {
-                    Console.WriteLine("Item not found.");
+                    Console.WriteLine(message);
                 }
             }
             else

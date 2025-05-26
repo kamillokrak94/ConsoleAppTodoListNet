@@ -1,11 +1,11 @@
 ﻿using ConsoleAppTodoListNet.Models;
-namespace ConsoleAppTodoListNet
+namespace ConsoleAppTodoListNet.Services
 {
     public interface ITodoService
     {
-        void AddTodo(string description);
+        bool AddTodo(string? description, out string message);
         List<Todo> GetAllTodos();
-        bool RemoveTodo(int id);
+        bool RemoveTodo(int id, out string m);
         void ClearTodos();
     }
 
@@ -14,40 +14,40 @@ namespace ConsoleAppTodoListNet
         private readonly List<Todo> _todos = [];
         private int _nextId = 1;
 
-        public void AddTodo(string description)
+        public bool AddTodo(string? description, out string message)
         {
-            try
+            if (string.IsNullOrWhiteSpace(description))
             {
-                if (string.IsNullOrWhiteSpace(description))
-                    throw new ArgumentException("Description cannot be empty.", nameof(description));
+                message = "Description cannot be empty.";
+                return false;
+            }
 
-                _todos.Add(new Todo
-                {
-                    Id = _nextId++,
-                    Description = description
-                });
-            }
-            catch (ArgumentException ex)
+            _todos.Add(new Todo
             {
-                
-                throw;
-            }
+                Id = _nextId++,
+                Description = description
+            });
+            message = "Item added successfully.";
+            return true;
         }
+           
 
         public List<Todo> GetAllTodos()
         {
-            
+
             return new List<Todo>(_todos);
         }
 
-        public bool RemoveTodo(int id)
+        public bool RemoveTodo(int id, out string message)
         {
             var todo = _todos.FirstOrDefault(t => t.Id == id);
             if (todo != null)
             {
                 _todos.Remove(todo);
+                message = "Item deleted successfully.";
                 return true;
             }
+            message = "Item not found.";
             return false;
         }
 
