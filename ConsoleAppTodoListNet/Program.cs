@@ -31,10 +31,10 @@ namespace ConsoleAppTodoListNet
                         Console.Clear();
                         break;
                     case "5":
-                        Console.WriteLine("Exiting the application...");
+                        Console.WriteLine($"{Messages.ExitingApp}");
                         break;
                     default:
-                        Console.WriteLine("Invalid choice. Please try again.");
+                        Console.WriteLine($"{Messages.InvalidChoice}");
                         break;
                 }
 
@@ -93,7 +93,7 @@ namespace ConsoleAppTodoListNet
             Console.WriteLine($"{Environment.NewLine}==== TODO LIST ====");
             if (todos.Count == 0)
             {
-                Console.WriteLine("No items found.");
+                Console.WriteLine($"{Messages.NoItems}");
             }
             else
             {
@@ -120,7 +120,7 @@ namespace ConsoleAppTodoListNet
             }
             else
             {
-                Console.WriteLine("Invalid ID.");
+                Console.WriteLine($"{Messages.InvalidId}");
             }
         }
     }

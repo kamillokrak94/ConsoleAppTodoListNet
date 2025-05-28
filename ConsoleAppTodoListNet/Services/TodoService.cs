@@ -18,7 +18,7 @@ namespace ConsoleAppTodoListNet.Services
         {
             if (string.IsNullOrWhiteSpace(description))
             {
-                message = "Description cannot be empty.";
+                message = Messages.DescriptionEmpty;
                 return false;
             }
 
@@ -27,7 +27,7 @@ namespace ConsoleAppTodoListNet.Services
                 Id = _nextId++,
                 Description = description
             });
-            message = "Item added successfully.";
+            message = Messages.ItemAdded;
             return true;
         }
            
@@ -44,10 +44,10 @@ namespace ConsoleAppTodoListNet.Services
             if (todo != null)
             {
                 _todos.Remove(todo);
-                message = "Item deleted successfully.";
+                message = Messages.ItemDeleted;
                 return true;
             }
-            message = "Item not found.";
+            message = Messages.ItemNotFound;
             return false;
         }
 
