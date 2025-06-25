@@ -93,7 +93,7 @@ namespace ConsoleAppTodoListNet
             Console.WriteLine($"{Environment.NewLine}==== TODO LIST ====");
             if (todos.Count == 0)
             {
-                Console.WriteLine($"{Messages.NoItems}");
+                Console.WriteLine($"{Messages.ItemNotFound}");
             }
             else
             {
