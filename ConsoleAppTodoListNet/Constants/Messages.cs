@@ -12,5 +12,6 @@ public static class Messages
     public const string ItemDeleted = "Item deleted successfully.";
     public const string ItemNotFound = "Item not found.";
     public const string InvalidId = "Invalid ID.";
-    
+    public const string ExitingApp = "Exiting App";
+
 }
