@@ -3,9 +3,10 @@ namespace ConsoleAppTodoListNet.Services
 {
     public interface ITodoService
     {
-        bool AddTodo(string? description, out string message);
+        string AddTodo(string? description);
         List<Todo> GetAllTodos();
-        bool RemoveTodo(int id, out string m);
+        string RemoveTodo(int id);
+        string UpdateTodo(int id, string? newDescription);
         void ClearTodos();
     }
 
@@ -14,12 +15,11 @@ namespace ConsoleAppTodoListNet.Services
         private readonly List<Todo> _todos = [];
         private int _nextId = 1;
 
-        public bool AddTodo(string? description, out string message)
+        public string AddTodo(string? description)
         {
             if (string.IsNullOrWhiteSpace(description))
             {
-                message = Messages.DescriptionEmpty;
-                return false;
+                return Messages.DescriptionEmpty;
             }
 
             _todos.Add(new Todo
@@ -27,30 +27,36 @@ namespace ConsoleAppTodoListNet.Services
                 Id = _nextId++,
                 Description = description
             });
-            message = Messages.ItemAdded;
-            return true;
+            return Messages.ItemAdded;
         }
-           
 
         public List<Todo> GetAllTodos()
         {
-
             return new List<Todo>(_todos);
         }
 
-        public bool RemoveTodo(int id, out string message)
+        public string RemoveTodo(int id)
         {
             var todo = _todos.FirstOrDefault(t => t.Id == id);
             if (todo != null)
             {
                 _todos.Remove(todo);
-                message = Messages.ItemDeleted;
-                return true;
+                return Messages.ItemDeleted;
             }
-            message = Messages.ItemNotFound;
-            return false;
+            return Messages.ItemNotFound;
         }
+        public string UpdateTodo(int id, string? newDescription)
+        {
+            var todo = _todos.FirstOrDefault(t => t.Id == id);
+            if (todo == null)
+                return "Item not found.";
 
+            if (string.IsNullOrWhiteSpace(newDescription))
+                return "Description cannot be empty.";
+
+            todo.Description = newDescription;
+            return "Item updated successfully.";
+        }
         public void ClearTodos()
         {
             _todos.Clear();
