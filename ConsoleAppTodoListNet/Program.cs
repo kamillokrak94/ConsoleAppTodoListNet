@@ -1,52 +1,70 @@
 ﻿using ConsoleAppTodoListNet.Services;
+public enum MenuOption
+{
+    Add = 1,
+    View,
+    Delete,
+    Clear,
+    Update,
+    Exit
+}
 
 namespace ConsoleAppTodoListNet
 {
     public class Program
     {
-        public static void Main(string[] args)
+      public static void Main(string[] args)
+{
+    ITodoService service = new TodoService();
+
+    while (true)
+    {
+        CreateHeader();
+        var input = Console.ReadLine() ?? string.Empty;
+
+        if (!int.TryParse(input, out int optionValue) ||
+            !Enum.IsDefined(typeof(MenuOption), optionValue))
         {
-            ITodoService service = new TodoService();
-
-
-            string choice;
-
-            while (true)
-            {
-                CreateHeader();
-                choice = Console.ReadLine() ?? string.Empty;
-
-                switch (choice)
-                {
-                    case "1":
-                        AddTodoItem(service);
-                        break;
-                    case "2":
-                        ViewTodoList(service);
-                        break;
-                    case "3":
-                        DeleteTodoItem(service);
-                        break;
-                    case "4":
-                        Console.Clear();
-                        break;
-                    case "5":
-                        Console.WriteLine($"{Messages.ExitingApp}");
-                        break;
-                    default:
-                        Console.WriteLine($"{Messages.InvalidChoice}");
-                        break;
-                }
-
-                if (choice == "5")
-                {
-                    break;
-                }
-            }
-
-            Console.WriteLine($"{Environment.NewLine}Press any key to exit...");
-            Console.ReadKey();
+            Console.WriteLine($"{Messages.InvalidChoice}");
+            continue;
         }
+
+        var choice = (MenuOption)optionValue;
+
+        switch (choice)
+        {
+            case MenuOption.Add:
+                AddTodoItem(service);
+                break;
+            case MenuOption.View:
+                ViewTodoList(service);
+                break;
+            case MenuOption.Delete:
+                DeleteTodoItem(service);
+                break;
+            case MenuOption.Clear:
+                Console.Clear();
+                break;
+                    case MenuOption.Update:
+                        UpdateTodoItem(service);
+                        break;
+                    case MenuOption.Exit:
+                Console.WriteLine($"{Messages.ExitingApp}");
+                break;
+            default:
+                Console.WriteLine($"{Messages.InvalidChoice}");
+                break;
+        }
+
+        if (choice == MenuOption.Exit)
+        {
+            break;
+        }
+    }
+
+    Console.WriteLine($"{Environment.NewLine}Press any key to exit...");
+    Console.ReadKey();
+}
         private static void CreateHeader()
         {
             Console.WriteLine("==== TODO LIST ====");
@@ -56,7 +74,8 @@ namespace ConsoleAppTodoListNet
         "2. View items",
         "3. Delete item",
         "4. Clear console",
-        "5. Exit"
+        "5. Update item",
+        "6. Exit"
     };
 
             foreach (var option in menuOptions)
@@ -71,19 +90,12 @@ namespace ConsoleAppTodoListNet
             var description = Console.ReadLine();
             if (!string.IsNullOrWhiteSpace(description))
             {
-                if (service.AddTodo(description, out string message))
-                {
-                    Console.WriteLine($"{message}");
-                }
-                else
-                {
-                    Console.WriteLine($"Failed to add item: {message}");
-                }
+                string message = service.AddTodo(description);
+                Console.WriteLine($"{message}");
             }
             else
             {
-                service.AddTodo(description, out string message);
-                Console.WriteLine(message);
+                Console.WriteLine("Description cannot be empty.");
             }
         }
 
@@ -103,25 +115,36 @@ namespace ConsoleAppTodoListNet
                 }
             }
         }
-        private static void DeleteTodoItem(ITodoService service)
+        private static void UpdateTodoItem(ITodoService service)
         {
             ViewTodoList(service);
-            Console.Write($"{Environment.NewLine}Enter the ID of the item to delete: ");
+            Console.Write($"{Environment.NewLine}Enter the ID of the item to update: ");
             if (int.TryParse(Console.ReadLine(), out int id))
             {
-                if (service.RemoveTodo(id, out string message))
-                {
-                    Console.WriteLine(message);
-                }
-                else
-                {
-                    Console.WriteLine(message);
-                }
+                Console.Write("Enter the new description: ");
+                var newDescription = Console.ReadLine();
+                string message = service.UpdateTodo(id, newDescription);
+                Console.WriteLine(message);
             }
             else
             {
                 Console.WriteLine($"{Messages.InvalidId}");
             }
         }
+        private static void DeleteTodoItem(ITodoService service)
+        {
+            ViewTodoList(service);
+            Console.Write($"{Environment.NewLine}Enter the ID of the item to delete: ");
+            if (int.TryParse(Console.ReadLine(), out int id))
+            {
+                string message = service.RemoveTodo(id); 
+                Console.WriteLine(message);
+            }
+            else
+            {
+                Console.WriteLine($"{Messages.InvalidId}");
+            }
+        }
+
     }
 }
